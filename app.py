@@ -1,21 +1,51 @@
-import os
-import secrets
+import os, secrets, re
 
-from flask import Flask
-from flask import render_template
-from flask import request
+from flask import (Flask,
+                   render_template,
+                   request,
+                   redirect,
+                   url_for,
+                   jsonify)
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or secrets.token_hex(32)
 
 @app.route('/')
-def index():
-    return render_template('index.html')
+def home():
+    return render_template('welcome.html')
+
+@app.route('/submit', methods=['POST'])
+def submit():
+    data = request.form.get('level')
+    return redirect(url_for('level_page', level=data))
+
+@app.route('/level/<int:level>')
+def level_page(level: int):
+    try:
+        if level in range(1,4):
+            return render_template('quiz.html', level=level)
+        else:
+            raise ValueError("Invalid value...")
+    except:
+        return render_template(), 400
+
+@app.route('/api/save', methods=['POST'])
+def save_record():
+    return None
+
+@app.route('/name', methods=['POST'])
+def save_name(name: str):
+    data = request.form.get('name')
+    return redirect(url_for('hall_of_fame.html', name=name))
+
+@app.route('/hall_of_fame')
+def hall_of_fame(records: list):
+    return render_template('hall_of_fame.html', records=records)
 
 if __name__ == "__main__":
     app.run(
         host = '0.0.0.0',
         port = 8080,
-        threaded = True
+        threaded = True,
         debug = True
     )

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Hall of Fame{% endblock %}
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/interface.css')}}">
+{% endblock %}
+{% block content %}
+    <p>Hall of Fame</p>
+    <ul>
+        {% for index in range(records) %}
+            <li>
+                <p id="number">{{ index + 1 }}</p>
+                <p id="name">{{ records[index].name }}</p>
+                <p id="point">{{ records[index].point }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

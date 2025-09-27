@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Welcome on Level {{ level }}{% endblock %}
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/interface.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/time.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='result.css') }}">
+{% endblock %}
+{% block content %}
+    <p id="task">2 + 2</p>
+    <button type="submit" value="1" id="answer-1">1</button>
+    <button type="submit" value="2" id="answer-2">2</button>
+    <button type="submit" value="3" id="answer-3">3</button>
+    <button type="submit" value="4" id="answer-4">4</button>
+    <p id="time">60 seconds left</p>
+{% endblock %}
