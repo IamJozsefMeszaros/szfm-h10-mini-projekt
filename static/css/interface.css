@@ -1,0 +1,39 @@
+h1 {
+  font-size: 24px;
+  margin-bottom: 24px;
+  color: #333333;
+}
+
+button {
+  background: linear-gradient(to right, #4CAF50, #81C784);
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 18px;
+  color: white;
+  cursor: pointer;
+  margin: 12px 0;
+  width: 200px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  animation: fadeInUp 0.5s ease forwards;
+}
+
+button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+p#task {
+  font-size: 16pt;
+}
