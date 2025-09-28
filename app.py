@@ -1,4 +1,4 @@
-import os, secrets, re
+import os, secrets
 
 from flask import (Flask,
                    render_template,
