@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+
+    {% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    {% endblock %}
+</head>
+<body>
+    <div class="container">
+        <h1>Mathematics Quiz</h1>
+        {% block content %}{% endblock %}
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const level = parseInt("{{ level }}");
+        const taskEl = document.getElementById("task");
+        const timeEl = document.getElementById("time");
+        const buttons = [
+          document.getElementById("answer-1"),
+          document.getElementById("answer-2"),
+          document.getElementById("answer-3"),
+          document.getElementById("answer-4")
+        ];
+
+        let questions = [];
+        let current = 0;
+        let score = 0;
+        let timer;
+        let timeLeft;
+
+        function generateQuestions(level) {
+          const ops1 = ["+", "-"];
+          const ops2 = ["*", "/"];
+          const ops3 = ["*"];
+          const q = [];
+
+          for (let i = 0; i < 6; i++) {
+            let a, b, op;
+            if (level === 1) {
+              a = Math.floor(Math.random() * 51);
+              b = Math.floor(Math.random() * 51);
+              op = ops1[Math.floor(Math.random() * ops1.length)];
+            } else if (level === 2) {
+              a = Math.floor(Math.random() * 16);
+              b = Math.floor(Math.random() * 15) + 1;
+              op = ops2[Math.floor(Math.random() * ops2.length)];
+              if (op === "/") a = a * b;
+            } else {
+              a = Math.floor(Math.random() * 101);
+              b = Math.floor(Math.random() * 101);
+              op = "*";
+            }
+            const correct = eval(`${a} ${op} ${b}`);
+            const choices = generateChoices(correct);
+            q.push({ a, b, op, correct, choices });
+          }
+          return q;
+        }
+
+        function generateChoices(correct) {
+          const choices = new Set();
+          choices.add(correct);
+          while (choices.size < 4) {
+            const offset = Math.floor(Math.random() * 10) + 1;
+            const variation = Math.random() < 0.5 ? correct + offset : correct - offset;
+            choices.add(variation);
+          }
+          return Array.from(choices).sort(() => Math.random() - 0.5);
+        }
+
+        function showQuestion() {
+          const q = questions[current];
+          taskEl.textContent = `Kérdés ${current + 1}: Mennyi ${q.a} ${q.op} ${q.b}?`;
+          buttons.forEach((btn, i) => {
+            btn.textContent = q.choices[i];
+            btn.value = q.choices[i];
+            btn.disabled = false;
+            btn.style.opacity = "1";
+          });
+
+          timeLeft = level === 3 ? 30 : 10;
+          timeEl.textContent = `${timeLeft} másodperc van hátra`;
+          timer = setInterval(() => {
+            timeLeft--;
+            timeEl.textContent = `${timeLeft} másodperc van hátra`;
+            if (timeLeft <= 0) {
+              clearInterval(timer);
+              disableButtons();
+              nextQuestion();
+            }
+          }, 1000);
+        }
+
+        function disableButtons() {
+          buttons.forEach(btn => btn.disabled = true);
+        }
+
+        function nextQuestion() {
+          current++;
+          if (current < questions.length) {
+            setTimeout(showQuestion, 1000);
+          } else {
+            showResult();
+          }
+        }
+
+        function showResult() {
+          taskEl.textContent = `Quiz vége! Pontszám: ${score} / ${questions.length}`;
+          timeEl.textContent = "";
+          buttons.forEach(btn => {
+            btn.style.display = "none";
+          });
+
+          const restartBtn = document.createElement("button");
+          restartBtn.textContent = "Újrakezdés";
+          restartBtn.style.marginTop = "24px";
+          restartBtn.onclick = () => {
+            window.location.href = "/";
+          };
+          document.querySelector(".container").appendChild(restartBtn);
+        }
+
+
+        buttons.forEach(btn => {
+          btn.addEventListener("click", () => {
+            clearInterval(timer);
+            const selected = parseFloat(btn.value);
+            const correct = questions[current].correct;
+            if (selected === correct) score++;
+            disableButtons();
+            nextQuestion();
+          });
+        });
+
+        questions = generateQuestions(level);
+        showQuestion();
+      });
+    </script>
+</body>
+</html>
