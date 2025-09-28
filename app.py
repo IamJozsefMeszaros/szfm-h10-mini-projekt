@@ -27,7 +27,7 @@ def level_page(level: int):
         else:
             raise ValueError("Invalid value...")
     except:
-        return render_template(), 400
+        return jsonify({"error": "Invalid value..."}), 400
 
 if __name__ == "__main__":
     app.run(
